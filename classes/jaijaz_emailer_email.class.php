@@ -185,7 +185,7 @@ class Jaijaz_Emailer_Email {
      * 
      * @return boolean true if not duplicated
      */
-    private function checkNotDuplicate() {
+    public function checkNotDuplicate() {
         if (!$this->messageid)
             return true;
         
