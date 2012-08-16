@@ -4,7 +4,7 @@ $table = 'email_queue';
 $query = "
     CREATE TABLE {email_queue} (
         `email_queueid` int(11) NOT NULL AUTO_INCREMENT,
-        `userid` int(11) NOT NULL DEFAULT '0',
+        `receiverid` int(11) NOT NULL DEFAULT '0',
         `messageid` int(11) NOT NULL DEFAULT '0',
         `plugin` varchar(255) NOT NULL DEFAULT '',
         `to_address` varchar(255) NOT NULL DEFAULT '',

@@ -12,7 +12,7 @@
 class Jaijaz_Emailer_Email {
 
     private $email_queueid = 0;
-    private $userid;
+    private $receiverid;
     private $messageid = 0;
     private $plugin;
     private $to_address;
@@ -42,7 +42,7 @@ class Jaijaz_Emailer_Email {
         if ($id) {
             $data = Jojo::selectRow("SELECT e.*, t.text_html, t.text_text FROM {email_queue} e, {email_text} t WHERE e.text = t.email_textid AND e.email_queueid = ?", $id);
             $this->email_queueid        = $id;
-            $this->userid               = $data['userid'];
+            $this->receiverid           = $data['receiverid'];
             $this->messageid            = $data['messageid'];
             $this->plugin               = $data['plugin'];
             $this->to_address           = $data['to_address'];
@@ -131,8 +131,8 @@ class Jaijaz_Emailer_Email {
         /* build the array */
         $smtpApiArray = array();
         $smtpApiArray['unique_args'] = array();
-        if ($this->userid) {
-            $smtpApiArray['unique_args']['userid'] = $this->userid;
+        if ($this->receiverid) {
+            $smtpApiArray['unique_args']['receiverid'] = $this->receiverid;
         }
         if ($this->plugin != '') {
             $smtpApiArray['unique_args']['plugin'] = $this->plugin;
@@ -159,25 +159,42 @@ class Jaijaz_Emailer_Email {
         $smarty->assign('content', $this->mergedHtml());
         $smarty->assign('subject', $this->subject);
         
+        // if there isn't a template_name the get it if there is a template
+        if (!$this->template_filename && $this->templateid) {
+            $this->template_filename = $this->getTemplateFileName();
+        }
+        
         $template = Jojo::either($this->template_filename, Jojo::getOption('emailer_template'), 'emailer_basic_template_html.tpl');
         return $smarty->fetch($template);
     }
     
     /**
-     * TODO:
-     * optional check to make sure that this message hasn't been sent before.
+     * returns the template file name for the templateid
+     * 
+     * @return string $templateFileName
+     */
+    private function getTemplateFileName()
+    {
+        $template = Jojo::selectRow("SELECT * FROM {email_template} WHERE email_templateid = ?", $this->templateid);
+        return $template['tpl_filename'];
+    }
+    
+    /**
+     * optional check to make sure that this message hasn't been sent before to this receiver.
      * requires that a messageid from the plugin be passed.
      * 
-     * @global type $smarty
-     * @return string $contentedTemplate
+     * @return boolean true if not duplicated
      */
     private function checkNotDuplicate() {
-        global $smarty;
-        $smarty->assign('content', $this->mergedHtml());
-        $smarty->assign('subject', $this->subject);
+        if (!$this->messageid)
+            return true;
         
-        $template = Jojo::either($this->template_filename, Jojo::getOption('emailer_template'), 'emailer_basic_template_html.tpl');
-        return $smarty->fetch($template);
+        $existing = Jojo::selectRow("SELECT * FROM {email_queue} WHERE plugin = ? AND messageid = ? AND (receiverid = ? OR to_address = ?)", array($this->plugin, $this->messageid, $this->receiverid, $this->to_address));
+        if ($existing) {
+            return false;
+        } else {
+            return true;
+        }
     }
     
     /**
@@ -204,7 +221,7 @@ class Jaijaz_Emailer_Email {
      */
     private function createSaveArray() {
         $data = array();
-        $data['userid']         = ($this->userid) ? $this->userid : 0;
+        $data['receiverid']     = ($this->receiverid) ? $this->receiverid : 0;
         $data['messageid']      = $this->messageid;
         $data['plugin']         = $this->plugin;
         $data['to_address']     = $this->to_address;
@@ -240,7 +257,7 @@ class Jaijaz_Emailer_Email {
         $query  = "";
         $query .= ($this->email_queueid) ? "UPDATE " : "INSERT INTO ";
         $query .= "{email_queue} SET 
-                        userid = ?,
+                        receiverid = ?,
                         messageid = ?,
                         plugin = ?,
                         to_address = ?,
