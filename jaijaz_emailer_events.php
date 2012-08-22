@@ -30,7 +30,7 @@ class Jojo_Plugin_Jaijaz_emailer_events extends Jojo_Plugin
 
     function getCorrectUrl()
     {
-        Assume the URL is correct
+        //Assume the URL is correct
         return _PROTOCOL.$_SERVER['HTTP_HOST'].$_SERVER['REQUEST_URI'];
     }
 
