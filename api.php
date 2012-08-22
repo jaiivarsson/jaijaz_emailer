@@ -1,4 +1,10 @@
 <?php
+
+$_provides['pluginClasses'] = array(
+    'jaijaz_emailer'        => 'Jaijaz Emailer - Parent',
+    'jaijaz_emailer_events' => 'Jaijaz Emailer - Event Handler'
+);
+
 $_options[] = array(
     'id'          => 'emailer_throttle',
     'category'    => 'Emailer',

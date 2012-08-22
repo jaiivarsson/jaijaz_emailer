@@ -21,7 +21,7 @@ $query = "
         `sent_date` bigint(20) NOT NULL DEFAULT '0',
         `email_read` enum('yes','no') NOT NULL DEFAULT 'no',
         PRIMARY KEY (`email_queueid`),
-        KEY `userid` (`userid`),
+        KEY `receiverid` (`receiverid`),
         KEY `messageid` (`messageid`),
         KEY `text` (`text`),
         KEY `plugin` (`plugin`),
