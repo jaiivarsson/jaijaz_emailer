@@ -38,16 +38,21 @@ class Jojo_Plugin_Jaijaz_emailer_events extends Jojo_Plugin
         foreach ($_POST as $key => $value) {
             $data[$key] = $value;
         }
+        $res = Jojo::insertQuery("INSERT INTO {email_eventlog} SET recipient = ?, email_queueid = ?, event_type = ?, plugin = ?, fields_other = ?", array($email_address, $email['email_queueid'], $event, $plugin, serialize($data)));
+        
+        
+        if ($email['email_read'] == 'no' && ($event == 'open' || $event == 'click')) {
+            Jojo::updateQuery("UPDATE {email_queueid} SET email_read = ? WHERE email_queueid = ?", array('yes', $email_queueid));
+        }
 
-
-        $result = call_user_func(array($activeplugin, 'process'));
+        $activeplugin = 'Jojo_Plugin_' . $plugin;
+        if (class_exists($activeplugin)) {
+            call_user_func(array($activeplugin, 'processEvent'), $data);
+        }
+        $result = call_user_func(array($activeplugin, 'process'), $data);
         jojo::runhook('jaijaz_emailer_event', array($plugin, $data));
 
-        $content['title']      = 'title here';     //optional title, will be displayed as the h1 heading, amongst other uses. defaults to whatever was entered in the admin section.
-        $content['seotitle']   = 'seo title here'; //optional seo title, will be displayed as the main title for the page, and in google results. defaults to whatever was entered in the admin section.
-        $content['css']        = '';               //need some css code just for this page? add the code to this variable and it will be included in the document head, just for this page. <style> tags are not required.
-        $content['javascript'] = '';               //same as for css - <script> tags are not required.
-        $content['content']  = $smarty->fetch('empty_plugin.tpl');
+        $content['content']  = 'event received';
         return $content;
     }
 

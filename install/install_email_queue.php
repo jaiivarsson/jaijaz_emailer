@@ -83,6 +83,7 @@ $table = 'email_eventlog';
 $query = "
     CREATE TABLE {email_eventlog} (
         `email_eventlogid` int(11) NOT NULL AUTO_INCREMENT,
+        `email_queueid` int(11) NOT NULL DEFAULT '0',
         `recipient` varchar(255) NOT NULL DEFAULT '',
         `event_type` varchar(255) NOT NULL DEFAULT '',
         `plugin` varchar(255) NOT NULL DEFAULT '',
