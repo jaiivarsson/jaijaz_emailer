@@ -90,7 +90,7 @@ $query = "
         PRIMARY KEY (`email_eventlogid`),
         KEY `recipient` (`recipient`),
         KEY `event_type` (`event_type`),
-        KEY `category` (`category`)
+        KEY `plugin` (`plugin`)
     ) ENGINE=MyISAM DEFAULT CHARSET=utf8";
 
 /* Check table structure */
