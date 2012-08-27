@@ -85,7 +85,7 @@ $query = "
         `email_eventlogid` int(11) NOT NULL AUTO_INCREMENT,
         `recipient` varchar(255) NOT NULL DEFAULT '',
         `event_type` varchar(255) NOT NULL DEFAULT '',
-        `category` varchar(255) NOT NULL DEFAULT '',
+        `plugin` varchar(255) NOT NULL DEFAULT '',
         `fields_other` text NOT NULL DEFAULT '',
         PRIMARY KEY (`email_eventlogid`),
         KEY `recipient` (`recipient`),
