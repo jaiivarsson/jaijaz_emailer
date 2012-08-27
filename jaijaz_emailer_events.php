@@ -42,15 +42,13 @@ class Jojo_Plugin_Jaijaz_emailer_events extends Jojo_Plugin
         
         
         if ($email['email_read'] == 'no' && ($event == 'open' || $event == 'click')) {
-            Jojo::updateQuery("UPDATE {email_queueid} SET email_read = ? WHERE email_queueid = ?", array('yes', $email_queueid));
+            Jojo::updateQuery("UPDATE {email_queue} SET email_read = ? WHERE email_queueid = ?", array('yes', $email_queueid));
         }
 
         $activeplugin = 'Jojo_Plugin_' . $plugin;
         if (class_exists($activeplugin)) {
             call_user_func(array($activeplugin, 'processEvent'), $data);
         }
-        $result = call_user_func(array($activeplugin, 'process'), $data);
-        jojo::runhook('jaijaz_emailer_event', array($plugin, $data));
 
         $content['content']  = 'event received';
         return $content;
