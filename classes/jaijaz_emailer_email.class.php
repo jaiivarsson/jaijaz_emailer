@@ -131,6 +131,10 @@ class Jaijaz_Emailer_Email {
         /* build the array */
         $smtpApiArray = array();
         $smtpApiArray['unique_args'] = array();
+        if ($this->email_queueid == 0) {
+            $this->saveToDb();
+        }
+        $smtpApiArray['unique_args']['email_queueid'] = $this->email_queueid;
         if ($this->receiverid) {
             $smtpApiArray['unique_args']['receiverid'] = $this->receiverid;
         }
