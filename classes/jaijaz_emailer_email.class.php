@@ -68,6 +68,8 @@ class Jaijaz_Emailer_Email {
         } else {
             $this->send_embargo = time();
             $this->send_status = 'queued';
+            $this->message_text = '';
+            $this->message_html = '';
         }
     }
 
@@ -315,7 +317,7 @@ class Jaijaz_Emailer_Email {
         $hostuser = Jojo::either(Jojo::getOption('emailer_smtpuser'), Jojo::getOption('smtp_mail_user'));
         $hostpass = Jojo::either(Jojo::getOption('emailer_smtppwd'), Jojo::getOption('smtp_mail_pass'));
         
-        $transport = Swift_SmtpTransport::newInstance($hostname, $hostport)
+        $transport = Swift_SmtpTransport::newInstance($hostname, $hostport, 'ssl')
                 ->setUsername($hostuser)
                 ->setPassword($hostpass)
         ;
@@ -342,7 +344,7 @@ class Jaijaz_Emailer_Email {
         
         /* send the email */
         $result = $mailer->send($email);
-        
+        //var_dump($result);
         /* update the database with result */
         if ($result) {
             $this->send_status = 'sent';

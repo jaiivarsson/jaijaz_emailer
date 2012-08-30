@@ -36,7 +36,7 @@ function _getContent()
 */
     
     function sendQueuedEmails() {
-        $emails = Jojo::selectQuery("SELECT email_queueid FROM {email_queue} WHERE send_status = ? AND send_embargo < ?", array('queued', time());
+        $emails = Jojo::selectQuery("SELECT email_queueid FROM {email_queue} WHERE send_status = ? AND send_embargo < ?", array('queued', time()));
         if (!$emails)
             return true;
         
@@ -45,11 +45,10 @@ function _getContent()
             require_once($pluginfile);
             break;
         }
-        
+
         // create the emailer object for each email and send it
         foreach ($emails as $e => $email) {
-            $email = new Jaijaz_Emailer_Email($message['email_queueid']);
-    
+            $email = new Jaijaz_Emailer_Email($email['email_queueid']);
             $result = $email->sendEmail();
         }
         return true;
