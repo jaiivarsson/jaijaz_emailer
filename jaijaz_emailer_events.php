@@ -39,9 +39,11 @@ class Jojo_Plugin_Jaijaz_emailer_events extends Jojo_Plugin
             $eventData['justOpened'] = true;
         }
 
-        $activeplugin = 'Jojo_Plugin_' . $eventData['plugin'];
-        if (class_exists($activeplugin)) {
-            call_user_func(array($activeplugin, 'processEvent'), $eventData);
+        if (isset($eventData['plugin'])) {
+            $activeplugin = 'Jojo_Plugin_' . $eventData['plugin'];
+            if (class_exists($activeplugin)) {
+                call_user_func(array($activeplugin, 'processEvent'), $eventData);
+            }
         }
 
         $content['content']  = 'event received';

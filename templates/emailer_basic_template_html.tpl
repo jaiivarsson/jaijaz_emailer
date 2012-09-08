@@ -205,6 +205,7 @@ Email on Acid - http://www.emailonacid.com/blog/details/C18/doctype_-_the_black_
 	<![endif]-->
 </head>
 <body>
+	{if $emailerTop}{$emailerTop}{/if}
 	<!-- Wrapper/Container Table: Use a wrapper table to control the width and the background color consistently of your email. Use this approach instead of setting attributes on the body tag. -->
 	<table cellpadding="0" cellspacing="0" border="0" id="backgroundTable">
 	<tr>
@@ -225,5 +226,6 @@ Email on Acid - http://www.emailonacid.com/blog/details/C18/doctype_-_the_black_
 	</tr>
 	</table>
 	<!-- End of wrapper table -->
+	{if $emailerBottom}{$emailerBottom}{/if}
 </body>
 </html>
