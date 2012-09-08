@@ -20,34 +20,28 @@ class Jojo_Plugin_Jaijaz_emailer_events extends Jojo_Plugin
         global $smarty;
         $content = array();
         Jojo::noFormInjection();
-        $email_queueid = Jojo::getFormData('email_queueid',0);
-        if ($email_queueid == 0) {
+        $eventData = $_POST;
+        if ($eventData['email_queueid'] == 0) {
             /* TODO: send back a 404 message */
         }
-        $email_address = Jojo::getFormData('email','');
-        if ($email_address == '') {
+        if ($eventData['email_address'] == '') {
             /* TODO: send back a 404 message */
         }
-        $email = Jojo::selectRow("SELECT * FROM {email_queue} WHERE email_queueid = ?", $email_queueid);
+        $email = Jojo::selectRow("SELECT * FROM {email_queue} WHERE email_queueid = ?", $eventData['email_queueid']);
         if (!$email) {
             /* TODO: send back a 404 message */
         }
-        $plugin = Jojo::getFormData('plugin','');
-        $event = Jojo::getFormData('event','');
-        $data = array();
-        foreach ($_POST as $key => $value) {
-            $data[$key] = $value;
-        }
-        $res = Jojo::insertQuery("INSERT INTO {email_eventlog} SET recipient = ?, email_queueid = ?, event_type = ?, plugin = ?, fields_other = ?", array($email_address, $email['email_queueid'], $event, $plugin, serialize($data)));
+        $res = Jojo::insertQuery("INSERT INTO {email_eventlog} SET recipient = ?, email_queueid = ?, event_type = ?, plugin = ?, fields_other = ?", array($eventData['email'], $eventData['email_queueid'], $eventData['event'], $eventData['plugin'], serialize($eventData)));
         
-        
-        if ($email['email_read'] == 'no' && ($event == 'open' || $event == 'click')) {
-            Jojo::updateQuery("UPDATE {email_queue} SET email_read = ? WHERE email_queueid = ?", array('yes', $email_queueid));
+        $eventData['justOpened'] = false;
+        if ($email['email_read'] == 'no' && ($eventData['event'] == 'open' || $eventData['event'] == 'click')) {
+            Jojo::updateQuery("UPDATE {email_queue} SET email_read = ? WHERE email_queueid = ?", array('yes', $eventData['email_queueid']));
+            $eventData['justOpened'] = true;
         }
 
-        $activeplugin = 'Jojo_Plugin_' . $plugin;
+        $activeplugin = 'Jojo_Plugin_' . $eventData['plugin'];
         if (class_exists($activeplugin)) {
-            call_user_func(array($activeplugin, 'processEvent'), $data);
+            call_user_func(array($activeplugin, 'processEvent'), $eventData);
         }
 
         $content['content']  = 'event received';

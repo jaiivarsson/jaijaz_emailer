@@ -88,6 +88,7 @@ $query = "
         `event_type` varchar(255) NOT NULL DEFAULT '',
         `plugin` varchar(255) NOT NULL DEFAULT '',
         `fields_other` text NOT NULL DEFAULT '',
+        `timestamp` timestamp NOT NULL default CURRENT_TIMESTAMP on update CURRENT_TIMESTAMP,
         PRIMARY KEY (`email_eventlogid`),
         KEY `recipient` (`recipient`),
         KEY `event_type` (`event_type`),
