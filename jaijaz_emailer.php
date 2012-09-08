@@ -36,7 +36,7 @@ function _getContent()
 */
     
     function sendQueuedEmails() {
-        $emails = Jojo::selectQuery("SELECT email_queueid FROM {email_queue} WHERE send_status = ? AND send_embargo < ?", array('queued', time()));
+        $emails = Jojo::selectQuery("SELECT email_queueid FROM {email_queue} WHERE send_status = ? AND send_embargo <= ?", array('queued', time()));
         if (!$emails)
             return true;
         

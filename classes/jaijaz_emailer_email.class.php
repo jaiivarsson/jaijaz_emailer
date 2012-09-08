@@ -100,8 +100,15 @@ class Jaijaz_Emailer_Email {
      */
     private function replaceMergeFields($text = '') {
         foreach ($this->merge_fields as $key => $value) {
-            $search = "[[" . $key . "]]";
-            $text = str_replace($search, $value, $text);
+            if ($key == 'unsubscribe') {
+                $user = Jojo::selectRow("SELECT token FROM {newsletter_subscribers} WHERE newsletter_subscriberid = ?", $this->receiverid);
+                $unsubscribeLink = _SITEURL . "/unsubscribe/" . $this->messageid . "/" . $user['token'];
+                $value = 'If you\'d like to unsubscribe and stop receiving these email <a href="' . $unsubscribeLink . '">click here</a>';
+                $text = str_replace('[[unsubscribe]]', $value, $text);
+            } else {
+                $search = "[[" . $key . "]]";
+                $text = str_replace($search, $value, $text);
+            }
         }
         return $text;
     }
