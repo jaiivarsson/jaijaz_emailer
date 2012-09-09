@@ -178,7 +178,8 @@ class Jaijaz_Emailer_Email {
         }
         
         $template = Jojo::either($this->template_filename, Jojo::getOption('emailer_template'), 'emailer_basic_template_html.tpl');
-        return $smarty->fetch($template);
+        $textOutput = $this->replaceMergeFields($smarty->fetch($template));
+        return $textOutput;
     }
     
     /**
