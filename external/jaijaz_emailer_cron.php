@@ -22,6 +22,7 @@ foreach (Jojo::listPlugins('classes/jaijaz_emailer_email.class.php') as $pluginf
 }
 $sentCount = 0;
 $failedCount = 0;
+$newslettersSent = array();
 foreach ($messages as $m => $message) {
     $email = new Jaijaz_Emailer_Email($message['email_queueid']);
     
@@ -29,9 +30,17 @@ foreach ($messages as $m => $message) {
     if ($result) {
         echo "Success: Email " . $email->email_queueid . " to " . $email->to_name . " sent<br />";
         $sentCount++;
+        if ($email->plugin == 'jaijaz_newsletter' && !in_array($email->messageid, $newslettersSent)) {
+            $newslettersSent[] = $email->messageid;
+        }
     } else {
         echo "FAILED: Email " . $email->email_queueid . " to " . $email->to_name . " sent<br />";
         $failedCount++;
+    }
+}
+if (!empty($newslettersSent)) {
+    foreach ($newslettersSent as $newletter) {
+        Jojo::insertQuery("UPDATE {newsletter_messages} SET status = ?, send_date = ? WHERE newsletter_messageid = ?", array('sent', time(), $newletter));
     }
 }
 
