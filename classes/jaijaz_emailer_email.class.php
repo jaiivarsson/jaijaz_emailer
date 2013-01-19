@@ -176,9 +176,11 @@ class Jaijaz_Emailer_Email {
         if (!$this->template_filename && $this->templateid) {
             $this->template_filename = $this->getTemplateFileName();
         }
-        $emailer = Jojo_Plugin_Jaijaz_newsletter::getEmailerTopBottom($this->messageid, false);
-        $smarty->assign('emailerTop', $emailer['top']);
-        $smarty->assign('emailerBottom', $emailer['bottom']);
+        // $emailer = Jojo_Plugin_Jaijaz_newsletter::getEmailerTopBottom($this->messageid, false);
+        $topBottomText = "";
+        $emailer = Jojo::runHook('emailer_header_footer', array($topBottomText, $this->plugin, $this->messageid, false));
+        $smarty->assign('emailerTop', $emailer[0]['top']);
+        $smarty->assign('emailerBottom', $emailer[0]['bottom']);
         
         $template = Jojo::either($this->template_filename, Jojo::getOption('emailer_template'), 'emailer_basic_template_html.tpl');
         $textOutput = $this->replaceMergeFields($smarty->fetch($template));
